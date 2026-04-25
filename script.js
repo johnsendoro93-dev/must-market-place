@@ -1,6 +1,6 @@
 // 1. INITIALIZE SUPABASE
 const supabaseUrl = 'YOUR_SUPABASE_URL_HERE'; 
-const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbW1wdXJ0YnFzbHlpdnpnY2Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTUwMjQsImV4cCI6MjA5MjY5MTAyNH0.kkEhKCOjZPvPEJbXj0eFpTjtM8qcvTdVhA3PSi7r3Nk';
 
 // Ensure the library loaded from HTML
 if (!window.supabase) {
