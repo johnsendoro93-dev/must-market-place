@@ -1,100 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MUST Campus Marketplace</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-
-    <div class="hero">
-        <div class="hero-overlay"></div> <div class="hero-content">
-            <h1 class="animate-pop">MUST Campus Marketplace</h1>
-            <p>The official hub for student trade at Mbeya University of Science and Technology.</p>
-        </div>
-    </div>
-
-    <div class="safety-banner">
-        <strong>🛡️ Campus Safety Tip:</strong> Meet buyers/sellers in public places (e.g., Cafeteria, Library) and never send money before seeing the item!
-    </div>
+    <header class="glass-header">
+        <h1>🏛️ MUST Marketplace</h1>
+        <button onclick="openPostModal()" class="primary-btn">+ Post Item</button>
+    </header>
 
     <main>
-        <div class="search-container">
-            <input type="text" id="search-input" placeholder="Search for textbooks, electronics, lab coats...">
-            <button id="search-btn">Search</button>
-        </div>
-
-        <section class="glass-form main-post-form">
-            <h2>Post an Item for Sale</h2>
-            <form id="sell-form">
-                <div class="form-group">
-                    <input type="text" id="item-name" placeholder="Item Name" required>
-                    <input type="number" id="item-price" placeholder="Price (TZS)" required>
-                </div>
-                <div class="form-group">
-                    <select id="item-category" required>
-                        <option value="" disabled selected>Select Category</option>
-                        <option value="Stationery">Stationery (Books, Pens)</option>
-                        <option value="Electronics">Electronics (Laptops, Phones)</option>
-                        <option value="Clothing">Clothing (Lab Coats, Boots)</option>
-                        <option value="Services">Services (Printing, Design)</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    <input type="tel" id="item-phone" placeholder="WhatsApp (e.g., 255712...)" required>
-                </div>
-                <div class="form-group image-upload-group">
-                    <label for="item-image" class="custom-file-upload">
-                        Add Product Photo (Required)
-                    </label>
-                    <input type="file" id="item-image" accept="image/*" required>
-                </div>
-                <button type="submit" class="post-btn">Publish to Marketplace</button>
-            </form>
+        <section id="marketplace-feed">
+            <div class="loader">Fetching live items from campus...</div>
         </section>
-
-        <h2 class="section-title">🛍️ Live Listings</h2>
-        <div id="products-grid" class="products-grid">
-            </div>
-        
-        <div id="empty-state" class="empty-state">
-            <img src="https://img.icons8.com/isometric/100/shopping-cart.png" alt="cart">
-            <h3>No items for sale yet!</h3>
-            <p>Be the first MUST student to post an item today.</p>
-        </div>
-
-        <hr class="divider">
-        <h2 class="section-title">📝 Wanted Board (Item Requests)</h2>
-        <p class="section-subtitle">Can't find what you need? Ask fellow students!</p>
-        
-        <section class="glass-form request-form-container">
-            <form id="request-form">
-                <div class="form-group">
-                    <input type="text" id="req-name" placeholder="What item do you need?" required>
-                    <input type="number" id="req-budget" placeholder="Your Budget (TZS)" required>
-                </div>
-                <div class="form-group">
-                    <input type="tel" id="req-phone" placeholder="WhatsApp (e.g., 255712...)" required>
-                    <button type="submit" class="post-btn request-btn">Post Request</button>
-                </div>
-            </form>
-        </section>
-
-        <div id="requests-grid" class="requests-grid">
-            </div>
-
     </main>
 
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2026 MUST Marketplace</p>
-            <p>Designed and Engineered by</p>
-            <p class="dev-name"><strong>IAM</strong> SCIENCE AND TECHNOLOGY</p>
-            <p class="dev-dept">BSc Biotechnology | Dept of Life Sciences</p>
+    <div id="postModal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="close-btn" onclick="closePostModal()">&times;</span>
+            <h2>Sell an Item</h2>
+            <form id="postForm" onsubmit="handlePost(event)">
+                <input type="text" id="itemName" placeholder="What are you selling?" required>
+                <input type="number" id="itemPrice" placeholder="Price (TZS)" required>
+                <textarea id="itemDesc" placeholder="Describe the item and your location (e.g., Block A)..." required></textarea>
+                <input type="tel" id="sellerPhone" placeholder="Your Phone Number (e.g., 0712345678)" required>
+                <button type="submit" class="submit-btn" id="submitBtn">Post to Marketplace</button>
+            </form>
         </div>
-    </footer>
+    </div>
 
     <script src="script.js"></script>
 </body>
