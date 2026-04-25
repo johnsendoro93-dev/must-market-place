@@ -1,5 +1,5 @@
 // 1. INITIALIZE SUPABASE
-const supabaseUrl = 'https://jcmmpurtbqslyivzgcfx.supabase.co/rest/v1/'; 
+const supabaseUrl = 'https://jcmmpurtbqslyivzgcfx.supabase.co/rest/v1'; 
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbW1wdXJ0YnFzbHlpdnpnY2Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTUwMjQsImV4cCI6MjA5MjY5MTAyNH0.kkEhKCOjZPvPEJbXj0eFpTjtM8qcvTdVhA3PSi7r3Nk';
 
 // Ensure the library loaded from HTML
