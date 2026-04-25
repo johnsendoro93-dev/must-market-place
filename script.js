@@ -1,93 +1,67 @@
-// 1. INITIALIZE SUPABASE
-const supabaseUrl = 'https://jcmmpurtbqslyivzgcfx.supabase.co'; 
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbW1wdXJ0YnFzbHlpdnpnY2Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTUwMjQsImV4cCI6MjA5MjY5MTAyNH0.kkEhKCOjZPvPEJbXj0eFpTjtM8qcvTdVhA3PSi7r3Nk';
+// 1. CONNECTION (Replace with your actual keys from Supabase)
+const supabaseUrl = 'https://YOUR_PROJECT_ID.supabase.co';
+const supabaseKey = 'YOUR_ANON_KEY';
+const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Ensure the library loaded from HTML
-if (!window.supabase) {
-    alert("System Error: Cloud database library failed to load.");
-}
-const _supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-// 2. UI CONTROLS
-function openPostModal() { document.getElementById('postModal').style.display = 'block'; }
-function closePostModal() { document.getElementById('postModal').style.display = 'none'; }
-
-// 3. FETCH LIVE ITEMS (The "Read" Operation)
-async function fetchItems() {
-    const feed = document.getElementById('marketplace-feed');
-    feed.innerHTML = '<div class="loader">Loading campus items...</div>';
-
-    try {
-        const { data: products, error } = await _supabase
-            .from('products')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-        if (error) throw error;
-
-        if (products.length === 0) {
-            feed.innerHTML = '<p style="text-align:center; width:100%;">No items currently. Be the first to post!</p>';
-            return;
-        }
-
-        // Clear feed and render items
-        feed.innerHTML = '';
-        products.forEach(item => {
-            // Format phone number for WhatsApp (remove leading 0, add 255)
-            let phone = item.phone || ''; // Fallback if no phone
-            if (phone.startsWith('0')) phone = '255' + phone.substring(1);
-            
-            const whatsappLink = `https://wa.me/${phone}?text=Hello! I saw your ${item.name} on MUST Marketplace.`;
-
-            feed.innerHTML += `
-                <div class="glass-card">
-                    <h3>${item.name}</h3>
-                    <p class="price-tag">${parseInt(item.price).toLocaleString()} TZS</p>
-                    <p>${item.description}</p>
-                    <small>Posted: ${new Date(item.created_at).toLocaleDateString()}</small><br>
-                    <a href="${whatsappLink}" target="_blank" class="whatsapp-btn">💬 Chat on WhatsApp</a>
-                </div>
-            `;
-        });
-    } catch (err) {
-        console.error("Fetch Error:", err);
-        feed.innerHTML = `<p style="color:red;">Failed to load items. Error: ${err.message}</p>`;
-    }
+// 2. UI LOGIC (Keep your old "Open/Close Form" functions here)
+function openPostForm() {
+    document.getElementById('postModal').style.display = 'block';
 }
 
-// 4. POST NEW ITEM (The "Write" Operation)
-async function handlePost(event) {
-    event.preventDefault(); // Stop page reload
-    
-    const btn = document.getElementById('submitBtn');
-    btn.innerText = 'Posting...';
-    btn.disabled = true;
+function closePostForm() {
+    document.getElementById('postModal').style.display = 'none';
+}
 
+// 3. CLOUD SAVING (The new part)
+async function addNewItem(event) {
+    event.preventDefault(); 
+
+    // Get values from your HTML inputs
     const name = document.getElementById('itemName').value;
     const price = document.getElementById('itemPrice').value;
     const desc = document.getElementById('itemDesc').value;
-    const phone = document.getElementById('sellerPhone').value; // New column needed in DB!
 
-    try {
-        const { error } = await _supabase
-            .from('products')
-            .insert([{ name: name, price: price, description: desc, phone: phone }]);
+    // Send to Supabase
+    const { data, error } = await _supabase
+        .from('products')
+        .insert([{ name, price, description: desc }]);
 
-        if (error) throw error;
-
-        alert("Successfully posted to MUST Marketplace!");
-        document.getElementById('postForm').reset();
-        closePostModal();
-        fetchItems(); // Instantly reload feed
-
-    } catch (err) {
-        console.error("Post Error:", err);
-        alert("Failed to post: " + err.message);
-    } finally {
-        btn.innerText = 'Post to Marketplace';
-        btn.disabled = false;
+    if (error) {
+        alert("Aisee, upload failed: " + error.message);
+    } else {
+        alert("Post Successful! It is now live for all MUST students.");
+        document.getElementById('postForm').reset(); 
+        closePostForm();
+        loadMarketplaceItems(); // Refresh the list
     }
 }
 
-// 5. START UP
-document.addEventListener('DOMContentLoaded', fetchItems);
+// 4. CLOUD LOADING (The part that lets others see your posts)
+async function loadMarketplaceItems() {
+    const { data: products, error } = await _supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Fetch Error:", error);
+        return;
+    }
+
+    const container = document.getElementById('item-list');
+    container.innerHTML = ''; 
+
+    products.forEach(item => {
+        container.innerHTML += `
+            <div class="product-card">
+                <h3>${item.name}</h3>
+                <p class="price">${item.price} TZS</p>
+                <p>${item.description}</p>
+                <small>Posted: ${new Date(item.created_at).toLocaleDateString()}</small>
+            </div>
+        `;
+    });
+}
+
+// 5. INITIALIZE
+window.onload = loadMarketplaceItems;
